@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Location Tracker</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDsFVtODgkggIYgJsJYFHNyjcuwSPxc8sE",
+      authDomain: "ime-location-tracking.firebaseapp.com",
+      databaseURL: "https://ime-location-tracking-default-rtdb.firebaseio.com",
+      projectId: "ime-location-tracking",
+      storageBucket: "ime-location-tracking.firebasestorage.app",
+      messagingSenderId: "336424024158",
+      appId: "1:336424024158:web:334b5c4f2f63b6a3eb9ccf",
+      measurementId: "G-BNH3SJDCZD"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function updateLocation(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      db.ref("location").set({
+        latitude: lat,
+        longitude: lng,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    function handleError(error) {
+      console.error("Location Error: ", error);
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(updateLocation, handleError, {
+        enableHighAccuracy: true
+      });
+    } else {
+      alert("Geolocation not supported in this browser.");
+    }
+  </script>
+</body>
+</html>
