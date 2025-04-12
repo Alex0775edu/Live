@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Location Viewer</title>
+  <style>#map { height: 90vh; width: 100%; }</style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsFVtODgkggIYgJsJYFHNyjcuwSPxc8sE"></script>
+</head>
+<body>
+  <h2>Live Location Viewer</h2>
+  <div id="map"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDsFVtODgkggIYgJsJYFHNyjcuwSPxc8sE",
+      authDomain: "ime-location-tracking.firebaseapp.com",
+      databaseURL: "https://ime-location-tracking-default-rtdb.firebaseio.com",
+      projectId: "ime-location-tracking",
+      storageBucket: "ime-location-tracking.firebasestorage.app",
+      messagingSenderId: "336424024158",
+      appId: "1:336424024158:web:334b5c4f2f63b6a3eb9ccf",
+      measurementId: "G-BNH3SJDCZD"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let map, marker;
+
+    function initMap(lat = 28.6139, lng = 77.2090) {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat, lng },
+        zoom: 15
+      });
+      marker = new google.maps.Marker({
+        position: { lat, lng },
+        map: map,
+        title: "Live Location"
+      });
+    }
+
+    function updateMap(lat, lng) {
+      const pos = { lat, lng };
+      marker.setPosition(pos);
+      map.setCenter(pos);
+    }
+
+    db.ref("location").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        updateMap(data.latitude, data.longitude);
+      }
+    });
+
+    window.onload = () => initMap();
+  </script>
+</body>
+</html>
